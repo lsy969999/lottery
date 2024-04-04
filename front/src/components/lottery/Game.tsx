@@ -3,35 +3,75 @@ import { Physics, RapierRigidBody, RigidBody } from "@react-three/rapier";
 import * as THREE from 'three'
 // import { getRandomBetween } from "../../utils/math";
 import { useFrame } from "@react-three/fiber";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { balls } from "./const";
-import { button, useControls } from "leva";
-
+import { Pane } from "tweakpane";
 const Game = () => {
-    const ballCases = useGLTF('public/models/ball_case.gltf');
+    const ballCases = useGLTF('public/models/ballcase.glb');
     //temp todo: gltfjsx
     ballCases.scene.traverse(child => {
         if (child instanceof THREE.Mesh && child.isMesh) {
             child.material.transparent = true;
-            child.material.opacity = 0.01;
+            child.material.opacity = 0.2;
             child.material.side = THREE.DoubleSide;
+            // child.rotation.y = Math.PI / 2
         }
     })
 
-    const { mixstep1, mixstep2, rapierDebug } = useControls({
-        rapierDebug: true,
-        mixstep1: false,
-        mixstep2: false,
-        reset: button(() => {
-            console.log('todo')
-        })
-    })
+
+    const coverRef = useRef<THREE.Mesh>(null)
+      useEffect(() => {
+        
+        console.log('s')
+        const pane = new Pane();
+        if(coverRef.current){
+            console.log(coverRef.current.position)
+            pane.addBinding(coverRef.current.position, 'x', {
+                min: 0,
+                max: 100,
+                step: 1
+              })
+        }
+        // .on('change', (ev) => {
+        //     if (ev.last) {
+
+        //         console.log(1, ev.value)
+        //         // 새로운 pos 객체를 생성하여 상태를 업데이트합니다.
+        //         const newPos = { ...pos, x: ev.value };
+        //         console.log(2, newPos);
+        //         setPos(newPos);
+        //     }
+        // });
+        return () => {
+            pane.dispose()
+        }
+      }, [])
+    // useEffect(() => {
+    //     const gui = new GUI()
+    //     gui.add(test, 'x', 0, Math.PI * 2)
+    //     gui.add(test, 'y', 0, Math.PI * 2)
+    //     gui.add(test, 'z', 0, Math.PI * 2)
+    //     return () => {
+    //       gui.destroy()
+    //     }
+    //   }, [test])
+    // const { mixstep1, mixstep2, rapierDebug } = useControls('setting',{
+    //     rapierDebug: true,
+    //     mixstep1: false,
+    //     mixstep2: false,
+    //     reset: button(() => {
+    //         console.log('todo')
+    //     })
+    // })
+    const mixstep1 = true;
+    const mixstep2 = false;
+    const rapierDebug = false;
     return (
         <Physics debug={ rapierDebug }>
-            <directionalLight
+            {/* <directionalLight
                 position={ [ 0, 1, 1 ] }
                 intensity={ 4.5 }
-            />
+            /> */}
             {/* <ambientLight intensity={ 1.5 } /> */}
             {/* <mesh>
                 <boxGeometry/>
@@ -39,21 +79,22 @@ const Game = () => {
             </mesh> */}
 
             {/* temp cover */}
-            <RigidBody
+            {/* <RigidBody
                 type="fixed"
-                position={ [0, 4, 0] }
+                position={ [0, 4.2, 0] }
                 rotation={ [0, 0, 0] }
                 scale={ [3, 1, 3] }
+                ccd={false}
             >
                 <mesh>
                     <boxGeometry />
                     <meshBasicMaterial side={THREE.DoubleSide} />
                 </mesh>
-            </RigidBody>
+            </RigidBody> */}
 
             {/* ball case  */}
-            <RigidBody type="fixed" colliders='trimesh'>
-                <primitive object={ ballCases.scene } scale={4} position={ [ 0, 0, 0] }>
+            <RigidBody type="fixed" colliders='trimesh' scale={4} position={ [ 0, 0, 0] } ccd={false}>
+                <primitive object={ ballCases.scene } >
                 </primitive>
             </RigidBody>
 
@@ -112,9 +153,9 @@ const Ball = ({ ballNum, ballTexture, pos, mixstep1, mixstep2 }: BallProp) => {
                 curt
                 && mixstep1
                 && x && y && z
-                && x < 1 && x > -2
-                && y < 1 && y > -2
-                && z < 1 && z > -2
+                && x < 1 && x > -1
+                && y < 1 && y > -1
+                && z < 1 && z > -1
             )
         {
             // const rotX = getRandomBetween(-0.01, -0.01, false)
@@ -124,9 +165,9 @@ const Ball = ({ ballNum, ballTexture, pos, mixstep1, mixstep2 }: BallProp) => {
             // console.log(posR)
             // const posR2 = getRandomBetween(-0.1, 0.1, false)
             // console.log(posR)
-            curt.applyImpulse({ x: 0, y: 0.1, z: 0 }, true)
+            curt.applyImpulse({ x: 0, y: 0, z: 0 }, false)
 
-            // curt.applyTorqueImpulse({ x: rotX/ 100, y: rotY/ 100, z: rotZ / 100}, true)
+            // curt.applyTorqueImpulse({ x: 0, y: 0, z: 0}, true)
         }
 
         if (
@@ -155,10 +196,11 @@ const Ball = ({ ballNum, ballTexture, pos, mixstep1, mixstep2 }: BallProp) => {
     return (
         <RigidBody
             ref={ ballRef }
-            type="dynamic"
+            type="fixed"
             colliders='ball'
             position={ [ posX, posY, posZ ] }
-            scale={ [ 0.4, 0.4, 0.4 ] }
+            scale={ [ 0.1, 0.1, 0.1 ] }
+            ccd={ false }
         >
             <mesh>
                 <sphereGeometry  />

@@ -20,11 +20,13 @@ const Lottery = () => {
             //     height: '100vh'
             // }}
             camera={ {
-                position: [ 0, 8, 8 ]
+                position: [ 14, 2, 0 ],
+                rotation: [ 0, Math.PI /2, 0 ]
             } }
         >
+            <axesHelper args={[5]} />
             <Perf position="top-left" />
-            <OrbitControls makeDefault />
+            <OrbitControls  />
             <Game />
         </Canvas>
     </CanvasStyle>
