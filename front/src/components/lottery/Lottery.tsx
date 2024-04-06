@@ -14,19 +14,13 @@ const Lottery = () => {
   return (
     <CanvasStyle>
         <Canvas
-            // style={{
-            //     border: '1px solid black',
-            //     width: '100vw',
-            //     height: '100vh'
-            // }}
-            camera={ {
-                position: [ 14, 2, 0 ],
-                rotation: [ 0, Math.PI /2, 0 ]
-            } }
+            onCreated={(state)=>{
+                state.camera.position.set(0, 1, -5);
+            }}
         >
-            <axesHelper args={[5]} />
+            {/* <axesHelper args={[5]} /> */}
             <Perf position="top-left" />
-            <OrbitControls  />
+            <OrbitControls makeDefault />
             <Game />
         </Canvas>
     </CanvasStyle>
