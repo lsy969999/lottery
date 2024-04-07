@@ -1,4 +1,4 @@
-import { useTexture } from "@react-three/drei"
+import { Text, useTexture } from "@react-three/drei"
 import { CapsuleCollider, Physics, RapierRigidBody, RigidBody } from "@react-three/rapier";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ballInjectorPosRef, balls } from "./const";
@@ -29,7 +29,7 @@ const Game = () => {
         }, 5000)
     }, [tmp])
     return (
-        <Physics debug={ rapierDebug } timeStep={1/250} maxCcdSubsteps={0}>
+        <Physics debug={ rapierDebug } timeStep={1/300} maxCcdSubsteps={1}>
             <directionalLight
                 position={ [ 4, 4, 1 ] }
                 intensity={ 4.5 }
@@ -75,6 +75,13 @@ const Game = () => {
                     />
                 </RigidBody>
             }
+
+            {/* <Text
+                position={ [ 0, -1.5, -1.5 ] }
+                rotation={ [ Math.PI / 180 * 30, Math.PI, 0] }
+            >
+                O, O, O, O, O, O / O 
+            </Text> */}
         </Physics>
     )
 }
