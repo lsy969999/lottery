@@ -8,6 +8,9 @@ import { useGLTF } from '@react-three/drei'
 import { GLTF } from 'three-stdlib'
 import { BallCollider, CuboidCollider, RapierRigidBody, RigidBody } from '@react-three/rapier'
 import { useFrame } from '@react-three/fiber'
+import { button, useControls } from 'leva'
+import gsap from 'gsap'
+
 type GLTFResult = GLTF & {
   nodes: {
     BallCatcherGuider1: THREE.Mesh
@@ -258,6 +261,69 @@ const BallCase = ({ gltf } : { gltf: GLTFResult }) => {
 const Injectors = ({ gltf } : { gltf: GLTFResult }) => {
     const { nodes } = gltf;
     const injectorCapRef = useRef<RapierRigidBody>(null);
+    const injectorRef = useRef<RapierRigidBody>(null);
+
+    useControls('machine', {
+        isInjectorCapBlocked: {
+            value: false,
+            onChange: (value) => {
+                if (value)
+                    handleInjectorCapBlock()
+                else 
+                    handleInjectorCapRelease()
+            }
+        },
+        isInjectorDown: {
+            value: false,
+            onChange: (value) => {
+                if (value)
+                    handleInJectorDown()
+                else 
+                    handleInejctorUp()
+            }
+        }
+    })
+
+    const handleInjectorCapBlock = () => {
+        const trs = injectorCapRef.current!.translation();
+        const pos = {
+            z: trs.z,
+        }
+        gsap.to(pos, { duration: 1, z: 0,  ease: 'power1.inOut', onUpdate: () => {
+            injectorCapRef.current?.setTranslation({ x: 0, y: 0, z: pos.z }, true);
+        }})
+    }
+
+    const handleInjectorCapRelease = () => {
+        const trs = injectorCapRef.current!.translation();
+        const pos = {
+            z: trs.z,
+        }
+        gsap.to(pos, { duration: 1, z: 1,  ease: 'power1.inOut', onUpdate: () => {
+            injectorCapRef.current?.setTranslation({ x: 0, y: 0, z: pos.z }, true);
+        }})
+    }
+
+    const handleInJectorDown = () => {
+        const trs = injectorRef.current!.translation();
+        const pos = {
+            y: trs.y,
+        }
+        gsap.to(pos, { duration: 1, y: -1,  ease: 'power1.inOut', onUpdate: () => {
+            injectorRef.current?.setTranslation({ x: 0, y: pos.y, z: 0 }, true);
+        }})
+    }
+
+    const handleInejctorUp = () => {
+        const trs = injectorRef.current!.translation();
+        const pos = {
+            y: trs.y,
+        }
+        gsap.to(pos, { duration: 1, y: 0,  ease: 'power1.inOut', onUpdate: () => {
+            injectorRef.current?.setTranslation({ x: 0, y: pos.y, z: 0 }, true);
+        }})
+    }
+    
     return (
         <>
             <RigidBody
@@ -267,49 +333,50 @@ const Injectors = ({ gltf } : { gltf: GLTFResult }) => {
                 position={ [ 0, 0, 1 ] }
             >
                 <mesh
-                geometry={nodes.BallCaseBallInjectorCap.geometry}
-                material={nodes.BallCaseBallInjectorCap.material}
+                    geometry={nodes.BallCaseBallInjectorCap.geometry}
+                    material={nodes.BallCaseBallInjectorCap.material}
                 />
             </RigidBody>
             <RigidBody
+                ref={ injectorRef }
                 type='kinematicPosition'
                 colliders='trimesh'
             >
                 <mesh
-                geometry={nodes.BallInjector3.geometry}
-                material={nodes.BallInjector3.material}
-                position={[0.2, 1.15, 1.2]}
-                scale={[0.11, 1, 0.11]}
+                    geometry={nodes.BallInjector3.geometry}
+                    material={nodes.BallInjector3.material}
+                    position={[0.2, 1.15, 1.2]}
+                    scale={[0.11, 1, 0.11]}
                 />
                 <mesh
-                geometry={nodes.BallInjector2.geometry}
-                material={nodes.BallInjector2.material}
-                position={[0.43, 1.16, 1.1]}
-                scale={[0.11, 1, 0.11]}
+                    geometry={nodes.BallInjector2.geometry}
+                    material={nodes.BallInjector2.material}
+                    position={[0.43, 1.16, 1.1]}
+                    scale={[0.11, 1, 0.11]}
                 />
                 <mesh
-                geometry={nodes.BallInjecter1.geometry}
-                material={nodes.BallInjecter1.material}
-                position={[0.66, 1.19, 1]}
-                scale={[0.11, 1, 0.11]}
+                    geometry={nodes.BallInjecter1.geometry}
+                    material={nodes.BallInjecter1.material}
+                    position={[0.66, 1.19, 1]}
+                    scale={[0.11, 1, 0.11]}
                 />
                 <mesh
-                geometry={nodes.BallInjector4.geometry}
-                material={nodes.BallInjector4.material}
-                position={[-0.2, 1.15, 1.2]}
-                scale={[0.11, 1, 0.11]}
+                    geometry={nodes.BallInjector4.geometry}
+                    material={nodes.BallInjector4.material}
+                    position={[-0.2, 1.15, 1.2]}
+                    scale={[0.11, 1, 0.11]}
                 />
                 <mesh
-                geometry={nodes.BallInjector5.geometry}
-                material={nodes.BallInjector5.material}
-                position={[-0.43, 1.16, 1.1]}
-                scale={[0.11, 1, 0.11]}
+                    geometry={nodes.BallInjector5.geometry}
+                    material={nodes.BallInjector5.material}
+                    position={[-0.43, 1.16, 1.1]}
+                    scale={[0.11, 1, 0.11]}
                 />
                 <mesh
-                geometry={nodes.BallInjector6.geometry}
-                material={nodes.BallInjector6.material}
-                position={[-0.66, 1.19, 1]}
-                scale={[0.11, 1, 0.11]}
+                    geometry={nodes.BallInjector6.geometry}
+                    material={nodes.BallInjector6.material}
+                    position={[-0.66, 1.19, 1]}
+                    scale={[0.11, 1, 0.11]}
                 />
             </RigidBody>
         </>
