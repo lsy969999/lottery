@@ -101,7 +101,7 @@ const Ball = ({ ballNum, ballTexture, pos }: BallProp) => {
     const texture = useTexture(ballTexture);
 
     const { ballFixed } = useControls('setting',{
-        ballFixed: false,
+        ballFixed: true,
     })
 
     const posX = pos.x 
